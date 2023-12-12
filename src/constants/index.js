@@ -1,4 +1,4 @@
-export const MESSAGE_APP_ADDRESS = "0xcE13A441D3548B02E436B8db1f30c1AC407EF512";
+export const MESSAGE_APP_ADDRESS = "0xEED472BdCBC65140846bdaf7Aa94bc524C6775f6";
 
 export const ABI = [
   {
@@ -53,6 +53,25 @@ export const ABI = [
         internalType: "struct MessageApp.Friend[]",
         name: "",
         type: "tuple[]",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "_account",
+        type: "address",
+      },
+    ],
+    name: "getUsername",
+    outputs: [
+      {
+        internalType: "string",
+        name: "",
+        type: "string",
       },
     ],
     stateMutability: "view",

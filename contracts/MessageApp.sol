@@ -9,7 +9,7 @@ contract MessageApp {
         Friend[] friendList;
         mapping(address => bool) isFriend;
         /* "isFriend" mapping is to check if an account is already friends with another,
-         rather than having to loop through the friendList, which may be a large array. */
+          rather than having to loop through the friendList, which may be a large array. */
     }
 
     struct Message {
@@ -40,6 +40,12 @@ contract MessageApp {
     function checkIfRegistered(address _account) public view returns (bool) {
         return bytes(registeredAccounts[_account].username).length > 0;
     }
+
+    function getUsername(address _account) public view returns (string memory) {
+        require(checkIfRegistered(msg.sender), "This account is not registered");
+        return registeredAccounts[_account].username;
+    }
+
 
     function addFriend(address _friend) external {
         require(checkIfRegistered(msg.sender), "Register your account");
@@ -76,10 +82,11 @@ contract MessageApp {
     }
 
     // returns a unique code for messages sent between the two accounts
-    function getChatCode(
-        address account_1,
-        address account_2
-    ) internal pure returns (bytes32) {
+    function getChatCode(address account_1, address account_2)
+        internal
+        pure
+        returns (bytes32)
+    {
         if (account_1 < account_2) {
             return keccak256(abi.encodePacked(account_1, account_2));
         } else {
@@ -87,9 +94,7 @@ contract MessageApp {
         }
     }
 
-    function readMessages(
-        address _friend
-    ) external view returns (Message[] memory) {
+    function readMessages(address _friend) external view returns (Message[] memory) {
         bytes32 chatcode = getChatCode(msg.sender, _friend);
 
         return messages[chatcode];
@@ -98,18 +103,12 @@ contract MessageApp {
     function sendMessage(address _friend, string memory _message) external {
         require(checkIfRegistered(msg.sender), "Register your account");
         require(checkIfRegistered(_friend), "This account is not registered");
-        require(
-            checkIfFriendAdded(_friend),
-            "To send a message, add this account to your friend list"
-        );
+        require(checkIfFriendAdded(_friend), "To send a message, add this account to your friend list");
 
         bytes32 chatcode = getChatCode(msg.sender, _friend);
 
-        Message memory newMessage = Message(
-            _message,
-            msg.sender,
-            block.timestamp
-        );
+        Message memory newMessage = Message(_message, msg.sender, block.timestamp);
         messages[chatcode].push(newMessage);
     }
+
 }
