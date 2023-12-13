@@ -4,16 +4,12 @@ import { MESSAGE_APP_ADDRESS, ABI } from "../constants";
 
 export const checkIfConnected = async () => {
   try {
-    if (window.ethereum) {
-      const accounts = await window.ethereum.request({
-        method: "eth_accounts",
-      });
-      const _acc = accounts[0];
-      return _acc;
-    } else {
-      alert("Kindly install Metamask");
-      return;
-    }
+    if (!window.ethereum) return alert("Kindly install Metamask");
+
+    const accounts = await window.ethereum.request({ method: "eth_accounts" });
+
+    const _acc = accounts[0];
+    return _acc;
   } catch (e) {
     console.log(e);
   }
@@ -21,23 +17,21 @@ export const checkIfConnected = async () => {
 
 export const connectWallet = async () => {
   try {
-    if (window.ethereum) {
-      const accounts = await window.ethereum.request({
-        method: "eth_requestAccounts",
-      });
-      const _acc = accounts[0];
-      return _acc;
-    } else {
-      alert("Kindly install Metamask");
-      return;
-    }
+    if (!window.ethereum) return alert("Kindly install Metamask");
+
+    const accounts = await window.ethereum.request({
+      method: "eth_requestAccounts",
+    });
+
+    const _acc = accounts[0];
+    return _acc;
   } catch (e) {
     console.log(e);
   }
 };
 
 export const getContract = (signerOrProvider) =>
-  new ethers.Contract(ABI, MESSAGE_APP_ADDRESS, signerOrProvider);
+  new ethers.Contract(MESSAGE_APP_ADDRESS, ABI, signerOrProvider);
 
 export const connectToContract = async () => {
   try {

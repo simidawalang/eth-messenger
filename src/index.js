@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter, BrowserRouter as Router } from "react-router-dom";
+import { BrowserRouter as Router } from "react-router-dom";
 import ReactDOM from "react-dom/client";
 import "./index.css";
 import App from "./App";
@@ -11,12 +11,12 @@ import { MessageAppProvider } from "./context";
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
-    <BrowserRouter>
+    <Router>
       <MessageAppProvider>
         <ToastContainer limit={1} />
         <App />
       </MessageAppProvider>
-    </BrowserRouter>
+    </Router>
   </React.StrictMode>
 );
 

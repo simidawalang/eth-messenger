@@ -1,0 +1,25 @@
+.navbar {
+  border-bottom: 1px solid gray;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 1rem;
+  align-items: center;
+}
+
+.navbar-list {
+  list-style: none;
+  display: flex;
+}
+
+.navbar-list__item {
+  padding: 0.5rem 1rem;
+}
+
+.register-btn__container {
+  position: relative;
+  margin-top: 1rem;
+}
+.register-btn {
+  display: block;
+  margin-left: auto;
+}

@@ -1,4 +1,4 @@
-import React, { useEffect, useState, createContext, useContext } from "react";
+import React, { useEffect, useState, createContext } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   checkIfConnected,
@@ -29,10 +29,16 @@ export const MessageAppProvider = ({ children }) => {
 
   const getData = async () => {
     try {
-      const account = await connectWallet();
       const contract = await connectToContract();
+      const account = await connectWallet();
+      setCurrentAccount((prev) => {
+        return { ...prev, account };
+      });
       const username = await contract.getUsername(account);
-      setCurrentAccount({ account, username });
+
+      !username
+        ? alert("This account is not registered")
+        : setCurrentAccount({ account, username });
 
       const friends = await contract.getMyFriends();
       setFriendsList(friends);
@@ -100,8 +106,16 @@ export const MessageAppProvider = ({ children }) => {
   return (
     <MessageAppContext.Provider
       value={{
+        checkIfConnected,
+        getData,
         currentAccount,
         currentFriend,
+        friendsList,
+        chatMessages,
+        loading,
+        errorMessage,
+        connectWallet,
+        connectToContract,
         registerAccount,
         getMessages,
         sendMessage,
