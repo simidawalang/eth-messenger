@@ -7,6 +7,7 @@ const Input = ({
   value,
   label,
   onChange,
+  onFocus,
   placeholder,
   readOnly,
   disabled,
@@ -21,6 +22,7 @@ const Input = ({
         placeholder={placeholder}
         readOnly={readOnly}
         disabled={disabled}
+        onFocus={onFocus}
       />
     </div>
   );

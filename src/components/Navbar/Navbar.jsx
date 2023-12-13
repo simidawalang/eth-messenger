@@ -1,20 +1,26 @@
 import React, { useContext, useState } from "react";
 import { Link } from "react-router-dom";
-import { Button, Input, Modal } from "../index";
+import { Button, Input, Loader, Modal } from "../index";
 import { MessageAppContext } from "../../context";
 import styles from "./navbar.module.css";
 
 const Navbar = () => {
   const menuList = [
-    { title: "Chat", link: "/" },
+    { title: "ETH MESSENGER", link: "/" },
     { title: "Search", link: "/search" },
   ];
 
   const [username, setUsername] = useState("");
 
-  const { currentAccount, connectWallet, registerAccount } =
+  const { currentAccount, connectWallet, registerAccount, loading } =
     useContext(MessageAppContext);
   const [openModal, setOpenModal] = useState(false);
+
+  const createAccount = async () => {
+    await registerAccount(username);
+
+    setOpenModal(false);
+  };
 
   return (
     <>
@@ -26,7 +32,6 @@ const Navbar = () => {
             </li>
           ))}
         </ul>
-
         {!currentAccount.account && (
           <Button onClick={connectWallet}>Connect Wallet</Button>
         )}
@@ -52,7 +57,9 @@ const Navbar = () => {
             readOnly
           />
           <div className={styles["register-btn__container"]}>
-            <Button className={styles["register-btn"]}>Register</Button>
+            <Button className={styles["register-btn"]} onClick={createAccount}>
+              {loading ? <Loader />: "Register"}
+            </Button>
           </div>
         </Modal>
       )}

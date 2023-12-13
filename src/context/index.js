@@ -46,7 +46,7 @@ export const MessageAppProvider = ({ children }) => {
       console.log(e);
     }
   };
-  const registerAccount = async ({ username, account }) => {
+  const registerAccount = async (username) => {
     try {
       setLoading(true);
       const contract = await connectToContract();
@@ -54,7 +54,9 @@ export const MessageAppProvider = ({ children }) => {
       await createdAccount.wait();
       setLoading(false);
 
-      setCurrentAccount({ username, account });
+      setCurrentAccount((prev) => {
+        return { ...prev, username };
+      });
     } catch (e) {
       console.log(e?.message);
     }
@@ -91,13 +93,26 @@ export const MessageAppProvider = ({ children }) => {
       const contract = await connectToContract();
       const addMyFriend = await contract.addFriend(friend);
       await addMyFriend.wait();
-      navigate("/");
+      // navigate("/");
       window.location.reload();
       setLoading(false);
     } catch (e) {
       console.log(e);
     }
   };
+
+  const getUser = async(acc) => {
+    setLoading(true);
+    try {
+      const contract = await connectToContract();
+      const account = await contract.getUsername(acc);
+      setLoading(false);
+      return account;
+    } catch (e) {
+      console.log(e);
+    }
+    setLoading(false);
+  }
 
   useEffect(() => {
     getData();
@@ -120,6 +135,7 @@ export const MessageAppProvider = ({ children }) => {
         getMessages,
         sendMessage,
         addFriend,
+        getUser
       }}
     >
       {children}
