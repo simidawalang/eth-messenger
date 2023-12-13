@@ -82,7 +82,7 @@ export const MessageAppProvider = ({ children }) => {
         _messages.push({
           msg: messages[i].msg,
           account: messages[i].sender,
-          time: formatTime(messages[i].time._hex),
+          time: formatTime(messages[i].time._hex * 1000),
         });
       }
       setChatMessages(_messages);
@@ -94,11 +94,16 @@ export const MessageAppProvider = ({ children }) => {
 
   const sendMessage = async (friend, message) => {
     try {
+      const time = Date.now();
       setLoading(true);
       const contract = await connectToContract();
+      const account = await connectWallet();
       const addMessage = await contract.sendMessage(friend, message);
       await addMessage.wait();
-      setChatMessages((prev) => [...prev, { friend, message }]);
+      setChatMessages((prev) => [
+        ...prev,
+        { account, msg: message, time: formatTime(time) },
+      ]);
       setLoading(false);
     } catch (e) {
       console.log(e);
