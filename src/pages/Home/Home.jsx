@@ -22,7 +22,6 @@ const Home = () => {
   const navigate = useNavigate();
 
   const searchAccount = async () => {
-    setFriendUsername("");
     setLoadingAccount(true);
     const res = await getUser(friendAddress.trim());
     if (res) setFriendUsername(res);

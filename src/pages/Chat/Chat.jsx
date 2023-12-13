@@ -28,7 +28,6 @@ const Chat = () => {
   const [addFriendLoading, setAddFriendLoading] = useState(false);
 
   const searchAccount = async () => {
-    setFriendUsername("");
     setLoadingAccount(true);
     const res = await getUser(friendAddress.trim());
     if (res) setFriendUsername(res);
@@ -42,7 +41,7 @@ const Chat = () => {
   const handleSendMessage = async () => {
     setSendLoading(true);
     await sendMessage(account, messageToSend);
-    
+
     setSendLoading(false);
   };
 
@@ -69,6 +68,9 @@ const Chat = () => {
           )}
         </div>
         <div className={styles["chat-user"]}>
+          <div>
+            <Button onClick={() => setOpenModal(true)}>Add Friend</Button>
+          </div>
           <h3 className={styles["current-chat__username"]}>
             @{friendsList.find((f) => f?.account === account)?.username}
           </h3>
