@@ -7,7 +7,6 @@ import styles from "./navbar.module.css";
 const Navbar = () => {
   const menuList = [
     { title: "ETH MESSENGER", link: "/" },
-    { title: "Search", link: "/search" },
   ];
 
   const [username, setUsername] = useState("");
@@ -21,6 +20,7 @@ const Navbar = () => {
 
     setOpenModal(false);
   };
+
 
   return (
     <>

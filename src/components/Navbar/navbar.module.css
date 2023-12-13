@@ -1,5 +1,5 @@
 .navbar {
-  border-bottom: 1px solid gray;
+  border-bottom: 1px solid lightgray;
   display: flex;
   justify-content: space-between;
   padding: 0 1rem;

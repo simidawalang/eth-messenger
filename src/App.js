@@ -1,6 +1,6 @@
 import "./App.css";
 import { Routes, Route } from "react-router-dom";
-import { Home } from "./pages";
+import { Chat, Home } from "./pages";
 import { Navbar } from "./components";
 
 function App() {
@@ -9,6 +9,7 @@ function App() {
       <Navbar />
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/chat/:account" element={<Chat />} />
       </Routes>
     </>
   );

@@ -1,15 +1,14 @@
 import React, { useEffect, useState, createContext } from "react";
-import { useNavigate } from "react-router-dom";
 import {
   checkIfConnected,
   connectWallet,
   connectToContract,
+  formatTime,
 } from "../utils/helpers";
 
 export const MessageAppContext = createContext();
 
 export const MessageAppProvider = ({ children }) => {
-  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
 
   // currentAccount for the account you're using to send messages
@@ -41,7 +40,16 @@ export const MessageAppProvider = ({ children }) => {
         : setCurrentAccount({ account, username });
 
       const friends = await contract.getMyFriends();
-      setFriendsList(friends);
+
+      let _friends = [];
+
+      for (let i = 0; i < friends.length; i++) {
+        _friends.push({
+          username: friends[i].username,
+          account: friends[i].eth_address,
+        });
+      }
+      setFriendsList(_friends);
     } catch (e) {
       console.log(e);
     }
@@ -67,7 +75,17 @@ export const MessageAppProvider = ({ children }) => {
       setLoading(true);
       const contract = await connectToContract();
       const messages = await contract.readMessages(friend);
-      setChatMessages(messages);
+
+      let _messages = [];
+
+      for (let i = 0; i < messages.length; i++) {
+        _messages.push({
+          msg: messages[i].msg,
+          account: messages[i].sender,
+          time: formatTime(messages[i].time._hex),
+        });
+      }
+      setChatMessages(_messages);
       setLoading(false);
     } catch (e) {
       console.log(e);
@@ -89,19 +107,17 @@ export const MessageAppProvider = ({ children }) => {
 
   const addFriend = async (friend) => {
     try {
-      setLoading(true);
       const contract = await connectToContract();
       const addMyFriend = await contract.addFriend(friend);
       await addMyFriend.wait();
       // navigate("/");
       window.location.reload();
-      setLoading(false);
     } catch (e) {
       console.log(e);
     }
   };
 
-  const getUser = async(acc) => {
+  const getUser = async (acc) => {
     setLoading(true);
     try {
       const contract = await connectToContract();
@@ -112,7 +128,7 @@ export const MessageAppProvider = ({ children }) => {
       console.log(e);
     }
     setLoading(false);
-  }
+  };
 
   useEffect(() => {
     getData();
@@ -125,6 +141,7 @@ export const MessageAppProvider = ({ children }) => {
         getData,
         currentAccount,
         currentFriend,
+        setCurrentFriend,
         friendsList,
         chatMessages,
         loading,
@@ -135,7 +152,7 @@ export const MessageAppProvider = ({ children }) => {
         getMessages,
         sendMessage,
         addFriend,
-        getUser
+        getUser,
       }}
     >
       {children}

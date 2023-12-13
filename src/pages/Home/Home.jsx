@@ -3,14 +3,23 @@ import { MessageAppContext } from "../../context";
 import { Button, Input, Loader, Modal } from "../../components";
 import { FaRegCircleUser } from "react-icons/fa6";
 import styles from "./home.module.css";
+import { useNavigate } from "react-router-dom";
 
 const Home = () => {
-  const { currentAccount, friendsList, getUser, loading } =
-    useContext(MessageAppContext);
+  const {
+    currentAccount,
+    friendsList,
+    getUser,
+    loading,
+    addFriend,
+    setCurrentFriend,
+  } = useContext(MessageAppContext);
   const [openModal, setOpenModal] = useState(false);
   const [friendAddress, setFriendAddress] = useState("");
   const [friendUsername, setFriendUsername] = useState("");
   const [loadingAccount, setLoadingAccount] = useState(true);
+  const [addFriendLoading, setAddFriendLoading] = useState(false);
+  const navigate = useNavigate();
 
   const searchAccount = async () => {
     setFriendUsername("");
@@ -19,13 +28,27 @@ const Home = () => {
     if (res) setFriendUsername(res);
     setLoadingAccount(false);
   };
+
+  const addUser = async () => {
+    setAddFriendLoading(true);
+    await addFriend(friendAddress);
+    setAddFriendLoading(false);
+  };
+
+  const startChat = (user) => {
+    setCurrentFriend(user);
+    navigate(`/chat/${user.account}`, {
+      state: { ...user },
+    });
+  };
   return (
     <>
       <div className={styles["main-body"]}>
-        <p>
-          {currentAccount.account} - @{currentAccount.username}
-        </p>
-        <div>
+        <div className={styles["current-account__details"]}>
+          <h2 className={styles.username}> @{currentAccount.username}</h2>
+          <p className={styles.account}>{currentAccount.account}</p>
+        </div>
+        <div className={styles.instructions}>
           <h3>Instructions</h3>
           <ul>
             <li>Use Metamask for this application</li>
@@ -36,14 +59,33 @@ const Home = () => {
             </li>
           </ul>
         </div>
-        <div>
-          {friendsList.length === 0 && (
-            <>
-              <p>You currently have no friends on your list</p>
-              <Button onClick={() => setOpenModal(true)}>Add Friend</Button>
-            </>
-          )}
-        </div>
+
+        {friendsList.length === 0 ? (
+          <>
+            <p>You currently have no friends on your list</p>
+            <Button onClick={() => setOpenModal(true)}>Add Friend</Button>
+          </>
+        ) : (
+          <div className={styles["friends-list"]}>
+            <h3>Friends</h3>
+            {friendsList.map((f, i) => (
+              <div key={i} className={styles["search-result"]}>
+                <FaRegCircleUser size={40} />
+                <div>
+                  <h3>@{f?.username}</h3>
+                  <span className={styles["friend-address"]}>{f?.account}</span>
+                </div>
+
+                <Button
+                  className={styles["search-btn"]}
+                  onClick={() => startChat(f)}
+                >
+                  Chat
+                </Button>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
       {openModal && (
         <Modal title="Add Friend" closeModal={() => setOpenModal(true)}>
@@ -66,7 +108,7 @@ const Home = () => {
           {!loadingAccount && !friendUsername && (
             <p>This account is not registered on this platform</p>
           )}
-          {!loading && friendUsername && (
+          {friendUsername && (
             <div className={styles["search-result"]}>
               <FaRegCircleUser size={40} />
               <div>
@@ -76,8 +118,8 @@ const Home = () => {
                 </span>
               </div>
 
-              <Button className={styles["search-btn"]}>
-                {loading ? <Loader /> : "Add Friend"}
+              <Button className={styles["search-btn"]} onClick={addUser}>
+                {addFriendLoading ? <Loader /> : "Add Friend"}
               </Button>
             </div>
           )}

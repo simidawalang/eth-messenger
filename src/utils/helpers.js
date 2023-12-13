@@ -49,15 +49,13 @@ export const connectToContract = async () => {
 };
 
 export const formatTime = (time) => {
-  const _time = new Date(time.toNumber());
+  const _time = new Date();
 
   const formattedTime =
     _time.getHours() +
-    "/" +
+    ":" +
     _time.getMinutes() +
-    "/" +
-    _time.getSeconds() +
-    " Date:" +
+    "  " +
     _time.getDate() +
     "/" +
     (_time.getMonth() + 1) +
