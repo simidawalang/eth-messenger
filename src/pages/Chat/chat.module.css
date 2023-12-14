@@ -103,3 +103,31 @@
 .chat-input .input input {
   border: none;
 }
+
+.search-btn__container {
+  position: relative;
+  margin-top: 1rem;
+}
+
+.search-btn {
+  display: block;
+  margin-left: auto;
+}
+
+.search-result {
+  margin-top: 1rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  border: 1px solid lightgray;
+  border-radius: 4px;
+  padding: 1rem 1.75rem;
+}
+
+.user-address {
+  margin-top: 1rem;
+}
+
+.search-result .friend-address {
+  font-size: 0.75rem;
+}

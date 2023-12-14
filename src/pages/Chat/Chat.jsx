@@ -15,8 +15,9 @@ const Chat = () => {
     friendsList,
     sendMessage,
     loading,
-    addUser,
+    addFriend,
     getUser,
+    currentAccount,
   } = useContext(MessageAppContext);
 
   const [messageToSend, setMessageToSend] = useState("");
@@ -44,6 +45,13 @@ const Chat = () => {
 
     setSendLoading(false);
   };
+
+  const addUser = async () => {
+    setAddFriendLoading(true);
+    await addFriend(friendAddress);
+    setAddFriendLoading(false);
+  };
+
 
   return (
     <>
@@ -109,7 +117,7 @@ const Chat = () => {
       </div>
 
       {openModal && (
-        <Modal title="Add Friend" closeModal={() => setOpenModal(true)}>
+        <Modal title="Add Friend" closeModal={() => setOpenModal(false)}>
           <p>
             Paste the address of the account you want to add. If their account
             is registered on this platform, you can see their account.
@@ -139,9 +147,12 @@ const Chat = () => {
                 </span>
               </div>
 
-              <Button className={styles["search-btn"]} onClick={addUser}>
-                {addFriendLoading ? <Loader /> : "Add Friend"}
-              </Button>
+              {currentAccount.account.trim() !== friendAddress.trim() && (
+                <Button className={styles["search-btn"]} onClick={addUser}>
+                  {addFriendLoading ? <Loader /> : "Add Friend"}
+                </Button>
+              )}
+        
             </div>
           )}
         </Modal>
