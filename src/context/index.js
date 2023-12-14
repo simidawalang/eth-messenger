@@ -1,4 +1,6 @@
 import React, { useEffect, useState, createContext } from "react";
+import { useNavigate } from "react-router-dom";
+import { ethers } from "ethers";
 import {
   checkIfConnected,
   connectWallet,
@@ -26,30 +28,43 @@ export const MessageAppProvider = ({ children }) => {
   const [chatMessages, setChatMessages] = useState([]);
   const [errorMessage, setErrorMessage] = useState("");
 
+  const navigate = useNavigate();
+
+  const getCurrentAccount = async () => {
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+
+    const accounts = await provider.listAccounts();
+    return accounts[0];
+  };
+
   const getData = async () => {
     try {
-      const contract = await connectToContract();
-      const account = await connectWallet();
-      setCurrentAccount((prev) => {
-        return { ...prev, account };
-      });
-      const username = await contract.getUsername(account);
+      const account = await getCurrentAccount();
 
-      !username
-        ? alert("This account is not registered")
-        : setCurrentAccount({ account, username });
+      if (account) {
+        const contract = await connectToContract();
 
-      const friends = await contract.getMyFriends();
-
-      let _friends = [];
-
-      for (let i = 0; i < friends.length; i++) {
-        _friends.push({
-          username: friends[i].username,
-          account: friends[i].eth_address,
+        setCurrentAccount((prev) => {
+          return { ...prev, account };
         });
+        const username = await contract.getUsername(account);
+
+        !username
+          ? alert("This account is not registered")
+          : setCurrentAccount({ account, username });
+
+        const friends = await contract.getMyFriends();
+
+        let _friends = [];
+
+        for (let i = 0; i < friends.length; i++) {
+          _friends.push({
+            username: friends[i].username,
+            account: friends[i].eth_address,
+          });
+        }
+        setFriendsList(_friends);
       }
-      setFriendsList(_friends);
     } catch (e) {
       console.log(e);
     }
@@ -137,6 +152,21 @@ export const MessageAppProvider = ({ children }) => {
 
   useEffect(() => {
     getData();
+  }, [currentAccount.account]);
+
+  const checkIfAccountChanged = async () => {
+    window.ethereum.on("accountsChanged", async () => {
+      const account = await getCurrentAccount();
+
+      setCurrentAccount({ account, username: "" });
+      navigate("/");
+    });
+  };
+
+  useEffect(() => {
+    checkIfAccountChanged();
+
+    return () => checkIfAccountChanged();
   }, []);
 
   return (
